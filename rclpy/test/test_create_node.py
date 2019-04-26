@@ -43,7 +43,8 @@ class TestCreateNode(unittest.TestCase):
     def test_create_node_with_empty_namespace(self):
         node_name = 'create_node_test'
         namespace = ''
-        node = rclpy.create_node(node_name, namespace=namespace, context=self.context)
+        node = rclpy.create_node(
+            node_name, namespace=namespace, context=self.context)
         self.assertEqual('/', node.get_namespace())
         node.destroy_node()
 

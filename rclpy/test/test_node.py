@@ -35,7 +35,9 @@ class TestNode(unittest.TestCase):
     def setUpClass(cls):
         cls.context = rclpy.context.Context()
         rclpy.init(context=cls.context)
-        cls.node = rclpy.create_node(TEST_NODE, namespace=TEST_NAMESPACE, context=cls.context)
+        cls.node = rclpy.create_node(
+            TEST_NODE, namespace=TEST_NAMESPACE, context=cls.context,
+            allow_undeclared_parameters=True)
 
     @classmethod
     def tearDownClass(cls):

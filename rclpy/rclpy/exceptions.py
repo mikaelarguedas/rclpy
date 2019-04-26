@@ -65,3 +65,39 @@ class InvalidServiceNameException(NameValidationException):
 
     def __init__(self, name, error_msg, invalid_index, *args):
         NameValidationException.__init__(self, 'service name', name, error_msg, invalid_index)
+
+
+# TODO(jubeira): Polish parameter-related exceptions; improve error messages.
+class ParameterNotDeclaredException(Exception):
+    """Raised when handling an undeclared parameter when it is not allowed."""
+
+    def __init__(self, *args):
+        Exception.__init__(self, 'Invalid access to undeclared parameter', *args)
+
+
+class ParameterAlreadyDeclaredException(Exception):
+    """Raised when declaring a parameter that had been declared before."""
+
+    def __init__(self, *args):
+        Exception.__init__(self, 'Parameter already declared.', *args)
+
+
+class InvalidParameterException(Exception):
+    """Raised when a parameter to be declared has an invalid name."""
+
+    def __init__(self, *args):
+        Exception.__init__(self, 'Invalid parameter name.', *args)
+
+
+class InvalidParameterValueException(Exception):
+    """Raised when a parameter to be declared is rejected by a callback."""
+
+    def __init__(self, *args):
+        Exception.__init__(self, 'Invalid parameter value.', *args)
+
+
+class ParameterImmutableException(Exception):
+    """Raised when a read-only parameter is modified."""
+
+    def __init__(self, *args):
+        Exception.__init__(self, 'Attempted to modify an read-only parameter.', *args)

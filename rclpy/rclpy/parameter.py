@@ -86,7 +86,14 @@ class Parameter:
             value = param_msg.value.string_array_value
         return cls(param_msg.name, type_, value)
 
-    def __init__(self, name, type_, value=None):
+    def __init__(self, name, type_, value=None, descriptor=ParameterDescriptor()):
+        """
+        Constructor.
+
+        The name and type in the given rcl_interfaces.msg.ParameterDescriptor
+        are ignored, and should be specified using the named arguments to this
+        function.
+        """
         if not isinstance(type_, Parameter.Type):
             raise TypeError("type must be an instance of '{}'".format(repr(Parameter.Type)))
 
@@ -96,6 +103,9 @@ class Parameter:
         self._type_ = type_
         self._name = name
         self._value = value
+        descriptor.name = name
+        descriptor.type = type_.value
+        self._descriptor = descriptor
 
     @property
     def name(self):
@@ -109,8 +119,9 @@ class Parameter:
     def value(self):
         return self._value
 
-    def get_descriptor(self):
-        return ParameterDescriptor(name=self.name, type=self.type_.value)
+    @property
+    def descriptor(self):
+        return self._descriptor
 
     def get_parameter_value(self):
         parameter_value = ParameterValue(type=self.type_.value)
