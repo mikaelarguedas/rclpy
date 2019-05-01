@@ -101,7 +101,8 @@ class InvalidParameterValueException(ParameterException):
     def __init__(self, parameter, value, *args):
         Exception.__init__(
             self,
-            'Invalid parameter value ({value}) for parameter'.format(value), parameter, *args)
+            'Invalid parameter value ({value}) for parameter'.format(
+                value=value), parameter, *args)
 
 
 class ParameterImmutableException(ParameterException):
