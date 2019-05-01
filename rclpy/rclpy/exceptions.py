@@ -67,37 +67,45 @@ class InvalidServiceNameException(NameValidationException):
         NameValidationException.__init__(self, 'service name', name, error_msg, invalid_index)
 
 
-# TODO(jubeira): Polish parameter-related exceptions; improve error messages.
-class ParameterNotDeclaredException(Exception):
+class ParameterException(Exception):
+    """Base exception for parameter-related errors."""
+
+    def __init__(self, error_msg, parameters, *args):
+        Exception.__init__(self, '{error_msg}: {parameters}'.format(error_msg, parameters), *args)
+
+
+class ParameterNotDeclaredException(ParameterException):
     """Raised when handling an undeclared parameter when it is not allowed."""
 
-    def __init__(self, *args):
-        Exception.__init__(self, 'Invalid access to undeclared parameter', *args)
+    def __init__(self, parameters, *args):
+        Exception.__init__(self, 'Invalid access to undeclared parameter(s)', parameters, *args)
 
 
-class ParameterAlreadyDeclaredException(Exception):
+class ParameterAlreadyDeclaredException(ParameterException):
     """Raised when declaring a parameter that had been declared before."""
 
-    def __init__(self, *args):
-        Exception.__init__(self, 'Parameter already declared.', *args)
+    def __init__(self, parameters, *args):
+        Exception.__init__(self, 'Parameter(s) already declared', parameters, *args)
 
 
-class InvalidParameterException(Exception):
+class InvalidParameterException(ParameterException):
     """Raised when a parameter to be declared has an invalid name."""
 
-    def __init__(self, *args):
-        Exception.__init__(self, 'Invalid parameter name.', *args)
+    def __init__(self, parameter, *args):
+        Exception.__init__(self, 'Invalid parameter name', parameter, *args)
 
 
-class InvalidParameterValueException(Exception):
+class InvalidParameterValueException(ParameterException):
     """Raised when a parameter to be declared is rejected by a callback."""
 
-    def __init__(self, *args):
-        Exception.__init__(self, 'Invalid parameter value.', *args)
+    def __init__(self, parameter, value, *args):
+        Exception.__init__(
+            self,
+            'Invalid parameter value ({value}) for parameter'.format(value), parameter, *args)
 
 
-class ParameterImmutableException(Exception):
+class ParameterImmutableException(ParameterException):
     """Raised when a read-only parameter is modified."""
 
-    def __init__(self, *args):
-        Exception.__init__(self, 'Attempted to modify an read-only parameter.', *args)
+    def __init__(self, parameter, *args):
+        Exception.__init__(self, 'Attempted to modify read-only parameter', parameter, *args)
