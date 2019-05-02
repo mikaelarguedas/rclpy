@@ -332,8 +332,8 @@ class Node:
         :return: The values for the given parameter names.
             A default Parameter will be returned for undeclared parameters if
             undeclared parameters are allowed.
-        :raises: ParameterNotDeclaredException if undeclared paramers are not allowed, and at least
-            one parameter hadn't been declared beforehand.
+        :raises: ParameterNotDeclaredException if undeclared parameters are not allowed,
+            and at least one parameter hadn't been declared beforehand.
         """
         if not all(isinstance(name, str) for name in names):
             raise TypeError('All names must be instances of type str')
@@ -347,8 +347,8 @@ class Node:
         :return: The values for the given parameter names.
             A default Parameter will be returned for an undeclared parameter if
             undeclared parameters are allowed.
-        :raises: ParameterNotDeclaredException if undeclared paramers are not allowed, and the
-            parameter hadn't been declared beforehand.
+        :raises: ParameterNotDeclaredException if undeclared parameters are not allowed,
+            and the parameter hadn't been declared beforehand.
         """
         if self.has_parameter(name):
             return self._parameters[name]
@@ -401,8 +401,8 @@ class Node:
 
         :param parameter_list: The list of parameters to set.
         :return: The result for each set action as a list.
-        :raises: ParameterNotDeclaredException if undeclared paramers are not allowed, and at least
-            one parameter in the list hadn't been declared beforehand.
+        :raises: ParameterNotDeclaredException if undeclared parameters are not allowed,
+            and at least one parameter in the list hadn't been declared beforehand.
         """
         return self._set_parameters(parameter_list, self.set_parameters_atomically)
 
@@ -470,8 +470,8 @@ class Node:
 
         :param parameter_list: The list of parameters to set.
         :return: Aggregate result of setting all the parameters atomically.
-        :raises: ParameterNotDeclaredException if undeclared paramers are not allowed, and at least
-            one parameter in the list hadn't been declared beforehand.
+        :raises: ParameterNotDeclaredException if undeclared parameters are not allowed,
+            and at least one parameter in the list hadn't been declared beforehand.
         """
         if not all(isinstance(parameter, Parameter) for parameter in parameter_list):
             raise TypeError("parameter must be instance of type '{}'".format(repr(Parameter)))
