@@ -20,8 +20,10 @@ from typing import TypeVar
 
 import weakref
 
+from rcl_interfaces.msg import Parameter as ParameterMsg
 from rcl_interfaces.msg import ParameterDescriptor
 from rcl_interfaces.msg import ParameterEvent
+from rcl_interfaces.msg import ParameterValue
 from rcl_interfaces.msg import SetParametersResult
 from rclpy.callback_groups import CallbackGroup
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
@@ -229,22 +231,33 @@ class Node:
         """Get the nodes logger."""
         return self._logger
 
-    def declare_parameter(self, parameter: Parameter) -> Parameter:
+    def declare_parameter(
+        self,
+        name: str,
+        value: ParameterValue,
+        descriptor: ParameterDescriptor
+    ) -> Parameter:
         """
         Declare and initialize a parameter.
 
         This method, if successful, will result in any callback registered with
         :func:`set_parameters_callback` to be called.
 
-        :param parameter: The parameter to declare, with a name, value and descriptor.
+        :param name: Name of the parameter to declare.
+        :param value: Value of the parameter to declare.
+        :param descriptor: Descriptor for the parameter to declare.
         :return: Parameter with the effectively assigned value.
         :raises: ParameterAlreadyDeclaredException if the parameter had already been declared.
         :raises: InvalidParameterException if the parameter name is invalid.
         :raises: InvalidParameterValueException if the registered callback rejects the parameter.
         """
-        return self.declare_parameters('/', [parameter])
+        return self.declare_parameters('', [(name, value, descriptor)])[0]
 
-    def declare_parameters(self, namespace: str, parameters: List[Parameter]) -> List[Parameter]:
+    def declare_parameters(
+        self,
+        namespace: str,
+        parameters: List[Tuple[str, ParameterValue, ParameterDescriptor]]
+    ) -> List[Parameter]:
         """
         Declare a list of parameters.
 
@@ -254,27 +267,38 @@ class Node:
         not be declared. Parameters declared up to that point will not be undeclared.
 
         :param namespace: Namespace for parameters.
-        :param parameters: The parameters to declare, with a name, value and descriptor.
+        :param parameters: Tuple with parameters to declare, with a name, value and descriptor.
         :return: Parameter list with the effectively assigned values for each of them.
         :raises: ParameterAlreadyDeclaredException if the parameter had already been declared.
         :raises: InvalidParameterException if the parameter name is invalid.
         :raises: InvalidParameterValueException if the registered callback rejects any parameter.
         """
-        for parameter in parameters:
-            parameter.name = namespace + parameter.name
+        parameter_list = []
+        for parameter_tuple in parameters:
+            name = parameter_tuple[0]
+            assert isinstance(name, str)
+            value = parameter_tuple[1]
+            assert isinstance(value, ParameterValue)
+            descriptor = parameter_tuple[2]
+            assert isinstance(descriptor, ParameterDescriptor)
+
             # Note(jubeira): declare_parameters verifies the name, but set_parameters doesn't.
-            validate_parameter_name(parameter.name)
+            full_name = namespace + name
+            validate_parameter_name(full_name)
+
+            parameter_list.append(Parameter.from_parameter_msg(
+                ParameterMsg(name=full_name, value=value), descriptor))
 
         parameters_already_declared = (
-            parameter.name in self._parameters for parameter in parameters
+            parameter.name in self._parameters for parameter in parameter_list
         )
         if any(parameters_already_declared):
             raise ParameterAlreadyDeclaredException(list(parameters_already_declared))
 
         # Call the callback once for each of the parameters, using method that doesn't
         # check whether the parameter was declared beforehand or not.
-        self._set_parameters(parameters, raise_on_failure=True)
-        return self.get_parameters([parameter.name for parameter in parameters])
+        self._set_parameters(parameter_list, raise_on_failure=True)
+        return self.get_parameters([parameter.name for parameter in parameter_list])
 
     def undeclare_parameter(self, name: str):
         """
@@ -380,10 +404,10 @@ class Node:
         return self._set_parameters(parameter_list, self.set_parameters_atomically)
 
     def _set_parameters(
-            self,
-            parameter_list: List[Parameter],
-            setter_func=None,
-            raise_on_failure=False
+        self,
+        parameter_list: List[Parameter],
+        setter_func=None,
+        raise_on_failure=False
     ) -> List[SetParametersResult]:
         """
         Set parameters for the node, and return the result for the set action.

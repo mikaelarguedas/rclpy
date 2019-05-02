@@ -63,7 +63,7 @@ class Parameter:
             return False
 
     @classmethod
-    def from_parameter_msg(cls, param_msg):
+    def from_parameter_msg(cls, param_msg, descriptor=ParameterDescriptor()):
         value = None
         type_ = Parameter.Type(value=param_msg.value.type)
         if Parameter.Type.BOOL == type_:
@@ -84,7 +84,7 @@ class Parameter:
             value = param_msg.value.double_array_value
         elif Parameter.Type.STRING_ARRAY == type_:
             value = param_msg.value.string_array_value
-        return cls(param_msg.name, type_, value)
+        return cls(param_msg.name, type_, value, descriptor)
 
     def __init__(self, name, type_, value=None, descriptor=ParameterDescriptor()):
         """
