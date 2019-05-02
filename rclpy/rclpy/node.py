@@ -264,7 +264,8 @@ class Node:
         This method, if successful, will result in any callback registered with
         :func:`set_parameters_callback` to be called once for each parameter.
         If one of those calls fail, an exception will be raised and the remaining parameters will
-        not be declared. Parameters declared up to that point will not be undeclared.
+        not be declared.
+        Parameters declared up to that point will not be undeclared.
 
         :param namespace: Namespace for parameters.
         :param parameters: Tuple with parameters to declare, with a name, value and descriptor.
@@ -328,8 +329,9 @@ class Node:
         Get a list of parameters.
 
         :param names: The names of the parameters to get.
-        :return: The values for the given parameter names. A default Parameter will be returned
-            for undeclared parameters if undeclared parameters are allowed.
+        :return: The values for the given parameter names.
+            A default Parameter will be returned for undeclared parameters if
+            undeclared parameters are allowed.
         :raises: ParameterNotDeclaredException if undeclared paramers are not allowed, and at least
             one parameter hadn't been declared beforehand.
         """
@@ -342,8 +344,9 @@ class Node:
         Get a parameter by name.
 
         :param name: The name of the parameter.
-        :return: The values for the given parameter names. A default Parameter will be returned
-            for an undeclared parameter if undeclared parameters are allowed.
+        :return: The values for the given parameter names.
+            A default Parameter will be returned for an undeclared parameter if
+            undeclared parameters are allowed.
         :raises: ParameterNotDeclaredException if undeclared paramers are not allowed, and the
             parameter hadn't been declared beforehand.
         """
@@ -387,7 +390,7 @@ class Node:
         declared before being set even if they were not declared beforehand.
 
         If a callback was registered previously with :func:`set_parameters_callback`, it will be
-        called prior to setting the parameters for the node once for each parameter.
+        called prior to setting the parameters for the node, once for each parameter.
         If the callback prevents a parameter from being set, then it will be reflected in the
         returned result; no exceptions will be raised in this case.
         For each successfully set parameter, a :class:`ParameterEvent` message is
@@ -423,9 +426,10 @@ class Node:
         according to `raise_on_failure` flag.
 
         :param parameter_list: List of parameters to set.
-        :param setter_func: Method to set the parameters. Use :func:`_set_parameters_atomically`
-            to declare and set the parameters without checking if they had been declared,
-            or :func:`set_parameters_atomically` to check if they had been declared beforehand.
+        :param setter_func: Method to set the parameters.
+            Use :func:`_set_parameters_atomically` to declare and set the parameters without
+            checking if they had been declared, or :func:`set_parameters_atomically`
+            to check if they had been declared beforehand.
         :return: The result for each set action as a list.
         :raises: InvalidParameterValueException if the user-defined callback rejects the
             parameter value and raise_on_failure flag is True.
@@ -448,9 +452,9 @@ class Node:
         If any parameter in the list was not declared beforehand and undeclared parameters are not
         allowed for the node, this method will raise a ParameterNotDeclaredException exception.
 
-        Parameters are set all at once. If setting a parameter fails due to not being declared,
-        then no parameter will be set set. Either all of the parameters are set or none of them
-        are set.
+        Parameters are set all at once.
+        If setting a parameter fails due to not being declared, then no parameter will be set set.
+        Either all of the parameters are set or none of them are set.
 
         If undeclared parameters are allowed, then all the parameters will be implicitly
         declared before being set even if they were not declared beforehand.
@@ -459,8 +463,7 @@ class Node:
         called prior to setting the parameters for the node only once for all parameters.
         If the callback prevents the parameters from being set, then it will be reflected in the
         returned result; no exceptions will be raised in this case.
-        For each successfully set parameter, a :class:`ParameterEvent` message is
-        published.
+        For each successfully set parameter, a :class:`ParameterEvent` message is published.
 
         If the value type of the parameter is NOT_SET, and the existing parameter type is
         something else, then the parameter will be implicitly undeclared.

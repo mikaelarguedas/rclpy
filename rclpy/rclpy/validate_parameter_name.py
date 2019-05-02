@@ -22,13 +22,11 @@ def validate_parameter_name(name):
 
     The name does not have to be fully-qualified and is not expanded.
 
-    If the name is invalid then rclpy.exceptions.InvalidParameterNameException
+    If the name is invalid then rclpy.exceptions.InvalidParameterException
     will be raised.
 
-    :param name str: topic or service name to be validated
-    :param is_service bool: if true, InvalidServiceNameException is raised
-    :returns: True when it is valid
-    :raises: InvalidParameterNameException: when the name is invalid
+    :param name str: topic or service name to be validated.
+    :raises: InvalidParameterException: when the name is invalid.
     """
     # TODO(jubeira): define whether this is an appropriate method to validate
     # parameter names.
